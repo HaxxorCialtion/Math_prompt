@@ -15,3 +15,5 @@ pip install -r requirements.txt
 1. You can focus solely on the prompt for this project, and you can also integrate other LLM API services or apply this project to other applications, such as qq-bot or wechat-bot.
 
 2. For different LLM APIs, you may need to change some settings in `math_api.py`.
+
+3. We choose qwen2-math-72b-instruct and deepseek-coder as the default models
