@@ -11,13 +11,12 @@ import re
 
 app = Flask(__name__)
 
-
 def custom_latex_parser(text):
-    # 处理 LaTeX 数学公式
+    # Handle LaTeX mathematical formulas
     text = text.replace('$$', r'\[').replace('$$', r'\]')
     text = text.replace('$', r'\(').replace('$', r'\)')
 
-    # 处理 Markdown 标题
+    # Handle Markdown headings
     def replace_heading(match):
         hashes = match.group(1)
         content = match.group(2)
@@ -26,7 +25,6 @@ def custom_latex_parser(text):
     text = re.sub(r'^(#{1,6})\s*(.*?)$', replace_heading, text, flags=re.MULTILINE)
 
     return text
-
 
 def trim_image(image_path):
     image = Image.open(image_path)
@@ -37,7 +35,6 @@ def trim_image(image_path):
     image_data_new = image_data[cropBox[0]:cropBox[1] + 1, cropBox[2]:cropBox[3] + 1, :]
     new_image = Image.fromarray(image_data_new)
     new_image.save(image_path)
-
 
 def capture_latex_render(latex_text, output_image_path='output.png'):
     chrome_options = Options()
@@ -56,23 +53,23 @@ def capture_latex_render(latex_text, output_image_path='output.png'):
         submit_button = driver.find_element(By.XPATH, "//input[@type='submit']")
         submit_button.click()
 
-        # 等待 MathJax 渲染完成
+        # Wait for MathJax to finish rendering
         WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.CLASS_NAME, "MathJax")))
 
-        # 获取实际内容高度
+        # Get actual content height
         js = "return Math.max(document.body.scrollHeight, document.body.offsetHeight, document.documentElement.clientHeight, document.documentElement.scrollHeight, document.documentElement.offsetHeight);"
         height = driver.execute_script(js)
 
-        # 设置窗口大小，增加额外的高度以确保捕获全部内容
+        # Set window size, add extra height to ensure full content is captured
         driver.set_window_size(1000, height + 100)
 
-        # 等待一小段时间以确保页面完全加载
+        # Wait a short time to ensure the page is fully loaded
         time.sleep(2)
 
-        # 截取整个页面
+        # Capture the entire page
         driver.save_screenshot(output_image_path)
 
-        # 裁剪图像
+        # Trim the image
         trim_image(output_image_path)
 
         return True
@@ -81,7 +78,6 @@ def capture_latex_render(latex_text, output_image_path='output.png'):
         return False
     finally:
         driver.quit()
-
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
@@ -143,7 +139,6 @@ def index():
     </html>
     ''', content=content)
 
-
 @app.route('/render', methods=['POST'])
 def render_latex():
     raw_content = request.form['content']
@@ -191,7 +186,6 @@ def render_latex():
     </body>
     </html>
     ''', content=content)
-
 
 if __name__ == '__main__':
     app.run(debug=True)

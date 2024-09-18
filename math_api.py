@@ -1,16 +1,16 @@
-# ----------------------------数学模型，返回Latex--------------------
-# -------------------------------------2024.09.01----------------------------
+# ---------------------------- Mathematical Model, returns LaTeX --------------------
+# ------------------------------------- 2024.09.01 ---------------------------------
+
 import time
 import json
 import requests
 from openai import OpenAI
 
-
 def qwen2_math(content):
     import re
     from openai import OpenAI
 
-    # 使用OpenAI的API
+    # Using OpenAI's API
     client = OpenAI(
         api_key=f"{qwen2_math_api}",
         base_url="https://dashscope.aliyuncs.com/compatible-mode/v1",
@@ -33,11 +33,10 @@ def qwen2_math(content):
 
         return response
     except Exception as e:
-        return f"请求失败，qwen2-math出错。错误信息：{str(e)}"
-
+        return f"Request failed, qwen2-math encountered an error. Error message: {str(e)}"
 
 def dp_convert_latex(fake_latex):
-    # 使用Deepseek API转换Latex
+    # Convert LaTeX using Deepseek API
     client = OpenAI(api_key=f"{deepseek_api}", base_url="https://api.deepseek.com")
     system_define = '''You are an expert LaTeX formatter and mathematical content reviewer. Your task is to review and correct the LaTeX formatting of mathematical content.'''
 
@@ -53,8 +52,7 @@ def dp_convert_latex(fake_latex):
         answer = response.choices[0].message.content
         return answer
     except Exception as e:
-        return f"请求失败，DeepSeek出错。错误信息：{str(e)}"
-
+        return f"Request failed, DeepSeek encountered an error. Error message: {str(e)}"
 
 def math_convert_img(true_latex):
     from selenium import webdriver
@@ -64,7 +62,7 @@ def math_convert_img(true_latex):
     import os
     from datetime import datetime
 
-    # 创建backup文件夹
+    # Create backup folder
     backup_folder = "backup"
     os.makedirs(backup_folder, exist_ok=True)
 
@@ -73,14 +71,14 @@ def math_convert_img(true_latex):
     html_path = os.path.join(backup_folder, f'temp_{timestamp}.html')
 
     def capture_latex_render(latex_text, output_image_path=image_path):
-        # 请求本地渲染服务
+        # Request local rendering service
         response = requests.post('http://127.0.0.1:5000/render', data={'content': latex_text})
 
         if response.status_code != 200:
             print(f"Error: Unable to render LaTeX. Status code: {response.status_code}")
             return
 
-        # Selenium操作截图
+        # Selenium to capture screenshot
         options = webdriver.EdgeOptions()
         options.add_argument('--headless')
         options.add_argument('--start-maximized')
@@ -113,16 +111,15 @@ def math_convert_img(true_latex):
     capture_latex_render(true_latex)
     return image_path
 
-
 if __name__ == "__main__":
-    qwen2_math_api = "<your_api>"
-    deepseek_api = "<your_api>"
+    qwen2_math_api = "sk-d8f80106c6c64771afe24fea8aa8b573"
+    deepseek_api = "sk-ead2d994e6f24958896c68b74fc1d965"
     user_input = input("Enter your math problem: ").strip()
     if user_input:
-        # 获取假latex
+        # Get fake LaTeX
         fake_latex = qwen2_math(user_input)
-        # 转换为真实latex
+        # Convert to real LaTeX
         true_latex = dp_convert_latex(fake_latex)
-        # 生成图片
+        # Generate image
         image_path = math_convert_img(true_latex)
         print(f"LaTeX rendered image saved at {image_path}")
