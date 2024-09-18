@@ -17,3 +17,9 @@ pip install -r requirements.txt
 2. For different LLM APIs, you may need to change some settings in `math_api.py`.
 
 3. We choose qwen2-math-72b-instruct and deepseek-coder as the default models
+
+4. For example:Could you help me solve the energy equation for the hydrogen atom in its ground state, specifically by solving its Schrödinger equation?
+
+5. And you will get:
+
+![Flowchart](./sch.PNG)
