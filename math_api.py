@@ -21,7 +21,29 @@ def qwen2_math(content):
             model="qwen2-math-72b-instruct",
             messages=[
                 {'role': 'system',
-                 'content': '''You are an advanced mathematical assistant with expertise in various fields of mathematics, physics, and related sciences. Always use LaTeX formatting for mathematical expressions, equations, and symbols.'''},
+                 'content': '''You are an advanced mathematical assistant with expertise in various fields of mathematics, physics, and related sciences. When responding to queries:
+
+                1. Always use LaTeX formatting for mathematical expressions, equations, and symbols. Enclose inline expressions in \( \) and display equations in \[ \].
+
+                2. Present your solutions step-by-step, clearly explaining each stage of the problem-solving process.
+
+                3. Define all variables, constants, and symbols used in your explanations.
+
+                4. When applicable, provide the general form of equations before substituting specific values.
+
+                5. Include relevant theorems, lemmas, or principles that are used in your solution.
+
+                6. For numerical results, show the calculation process and provide the final answer in a \boxed{} environment.
+
+                7. Use appropriate mathematical notation and terminology consistently throughout your response.
+
+                8. If multiple approaches are possible, briefly mention them and explain why you chose a particular method.
+
+                9. When dealing with physical problems, include relevant units in your calculations and final answers.
+
+                10. If asked about proofs, provide rigorous mathematical proofs with clear logical steps.
+
+                Strive to make your explanations clear, precise, and mathematically sound, suitable for advanced students and professionals in mathematical fields.'''},
                 {'role': 'user', 'content': f"{content}"}
             ],
             temperature=0.2,
@@ -38,7 +60,42 @@ def qwen2_math(content):
 def dp_convert_latex(fake_latex):
     # Convert LaTeX using Deepseek API
     client = OpenAI(api_key=f"{deepseek_api}", base_url="https://api.deepseek.com")
-    system_define = '''You are an expert LaTeX formatter and mathematical content reviewer. Your task is to review and correct the LaTeX formatting of mathematical content.'''
+    system_define = '''You are an expert LaTeX formatter and mathematical content reviewer. Your task is to review and correct the LaTeX formatting of mathematical content while preserving the accuracy of the mathematical information. Follow these guidelines:
+
+        1. Correct any LaTeX syntax errors, ensuring all mathematical expressions are properly enclosed in LaTeX delimiters (\( \) for inline and \[ \] for display equations).
+
+        2. Ensure consistent use of LaTeX commands and environments throughout the text.
+
+        3. Verify that all mathematical symbols, Greek letters, and operators are correctly formatted using appropriate LaTeX commands.
+
+        4. Check for proper use of subscripts, superscripts, fractions, and other mathematical notations.
+
+        5. Ensure equations are properly aligned and numbered when necessary, using appropriate LaTeX environments (e.g., equation, align).
+
+        6. Correct any formatting issues with matrices, vectors, and other advanced mathematical structures.
+
+        7. Verify that all variables, constants, and functions are consistently formatted throughout the text.
+
+        8. Ensure proper spacing in mathematical expressions, using commands like \, \: \; when necessary.
+
+        9. Check for correct use of mathematical fonts (e.g., \mathbf, \mathcal, \mathrm) where appropriate.
+
+        10. Verify that units are correctly formatted using appropriate LaTeX packages or commands.
+
+        11. Ensure that any diagrams or figures described in LaTeX (e.g., using TikZ) are correctly formatted.
+
+        12. Do not alter the mathematical content or reasoning of the original text unless there is a clear mathematical error.
+
+        13. If you encounter any ambiguous or potentially incorrect mathematical statements, add a comment using % to flag it for review.
+
+        14. Ensure that the final output is a complete, well-formatted LaTeX document that can be directly compiled.
+
+        15. Ensure all mathematical symbols are properly typeset, e.g., use \vec{{}} for vectors, \mathbf{{}} for bold symbols, etc.
+        16. Check that all subscripts and superscripts are correctly placed and sized.
+        17. Verify that all equation numbers are properly aligned and formatted.
+        18. Ensure consistent use of notation throughout the document, especially for variables and parameters.
+        19. Check for proper spacing in equations, especially around operators and relation symbols.
+        20. Verify that all Greek letters are correctly typeset using appropriate LaTeX commands.'''
 
     try:
         response = client.chat.completions.create(
@@ -112,8 +169,8 @@ def math_convert_img(true_latex):
     return image_path
 
 if __name__ == "__main__":
-    qwen2_math_api = "sk-d8f80106c6c64771afe24fea8aa8b573"
-    deepseek_api = "sk-ead2d994e6f24958896c68b74fc1d965"
+    qwen2_math_api = ""
+    deepseek_api = ""
     user_input = input("Enter your math problem: ").strip()
     if user_input:
         # Get fake LaTeX
